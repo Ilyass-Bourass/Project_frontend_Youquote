@@ -1,57 +1,25 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaHeart, FaEye, FaEdit, FaTrash, FaPlus } from "react-icons/fa";
 import api from "../../services/api";
 
 const MesQuotes = () => {
+    const navigate = useNavigate();
     const [quotes, setQuotes] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const $token = localStorage.getItem("token");
 
     useEffect(() => {
         const fetchQuotes = async () => {
             try {
-                // Simuler l'appel API (remplacez par un vrai appel API)
-                // const response = await api.get('/user/quotes');
-                // setQuotes(response.data);
-
-                // Données simulées
-                setQuotes([
-                    {
-                        id: 1,
-                        content_text:
-                            "La vie est un mystère qu'il faut vivre, et non un problème à résoudre.",
-                        auteur: "Gandhi",
-                        source: "Livre de sagesse",
-                        nombre_mots: 14,
-                        nombre_vues: 124,
-                        nombres_likes: 42,
-                        created_at: "2023-06-15",
+                const response = await api.get("/quotes/jjh", {
+                    headers: {
+                        Authorization: `Bearer ${$token}`,
                     },
-                    {
-                        id: 2,
-                        content_text:
-                            "Le succès n'est pas final, l'échec n'est pas fatal. C'est le courage de continuer qui compte.",
-                        auteur: "Winston Churchill",
-                        source: "Discours",
-                        nombre_mots: 17,
-                        nombre_vues: 98,
-                        nombres_likes: 35,
-                        created_at: "2023-07-21",
-                    },
-                    {
-                        id: 3,
-                        content_text:
-                            "La plus grande gloire n'est pas de ne jamais tomber, mais de se relever à chaque chute.",
-                        auteur: "Confucius",
-                        source: "Manuscrits",
-                        nombre_mots: 15,
-                        nombre_vues: 76,
-                        nombres_likes: 27,
-                        created_at: "2023-08-04",
-                    },
-                ]);
-
+                });
+                console.log(response.data);
+                setQuotes(response.data);
                 setLoading(false);
             } catch (err) {
                 setError("Erreur lors du chargement des citations");
@@ -63,6 +31,13 @@ const MesQuotes = () => {
         fetchQuotes();
     }, []);
 
+    const handelEdit = (quote) => {
+        return (e) => {
+            e.stopPropagation(); // Prevent event bubbling
+            navigate(`/dashboardUser/edit/${quote.id}`);
+        };
+    };
+
     const handleDelete = async (id) => {
         if (
             window.confirm(
@@ -70,10 +45,11 @@ const MesQuotes = () => {
             )
         ) {
             try {
-                // Simuler l'appel API (remplacez par un vrai appel API)
-                // await api.delete(`/quotes/${id}`);
-
-                // Mise à jour de l'interface utilisateur
+                await api.delete(`/quotes/${id}`, {
+                    headers: {
+                        Authorization: `Bearer ${$token}`,
+                    },
+                });
                 setQuotes(quotes.filter((quote) => quote.id !== id));
             } catch (err) {
                 alert("Erreur lors de la suppression de la citation");
@@ -100,7 +76,6 @@ const MesQuotes = () => {
                 <h2 className="text-2xl font-semibold text-purple-700">
                     📝 Mes citations
                 </h2>
-                
             </div>
 
             {quotes.length === 0 ? (
@@ -174,7 +149,10 @@ const MesQuotes = () => {
                                         </div>
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                        <div className="flex space-x-3">
+                                        <div
+                                            onClick={handelEdit(quote)}
+                                            className="flex space-x-3"
+                                        >
                                             <button className="text-indigo-600 hover:text-indigo-900">
                                                 <FaEdit />
                                             </button>

@@ -18,6 +18,7 @@ import MesFavorites from "./pages/user/MesFavorites";
 import CreateQuote from "./pages/user/CreateQuote";
 import AjouteQuote from "./pages/user/AjouteQuote";
 import MesStatistiques from "./pages/user/mesStatistiques";
+import EditQuote from "./pages/user/EditQuote";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -33,11 +34,13 @@ root.render(
                 <Route path="/dashboardAdmin" element={<p>dashboardAdmin</p>} />
 
                 <Route path="/dashboardUser" element={<IndexUser />}>
+                    
                     <Route path="quotes" element={<MesQuotes />} />
                     <Route path="favorites" element={<MesFavorites />} />
                     <Route path="create" element={<CreateQuote />} />
                     <Route path="ajouter" element={<AjouteQuote />} />
                     <Route path="statistiques" element={<MesStatistiques />} />
+                    <Route path='/dashboardUser/edit/:id' element={< EditQuote />} />
                 </Route>
             </Routes>
         </BrowserRouter>

@@ -75,7 +75,7 @@ class QuoteController extends Controller
     {
         $quotes=$request->user()->quotes()->get();
         if($quotes){
-            return new QuoteResource($quotes);
+            return response()->json($quotes,200);
         }
         return response()->json(['message'=>'Quote not found'],404);
     }
