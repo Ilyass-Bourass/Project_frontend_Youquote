@@ -11,7 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        //
+        Schema::create('categories_quotes', function (Blueprint $table) {
+            $table->foreignId('category_id')->references('id')->on('categories')->onDelete('cascade');
+            $table->foreignId('quote_id')->references('id')->on('quotes')->onDelete('cascade');
+            $table->timestamps();
+            
+            // Ajouter une clé primaire composite
+            $table->primary(['category_id', 'quote_id']);
+        });
     }
 
     /**
@@ -19,10 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::create('categories_quotes',function(Blueprint $table){
-            $table->foreignId('category_id')->references('id')->on('categories')->onDelete('cascade');
-            $table->foreignId('quote_id')->references('id')->on('quotes')->onDelete('cascade');
-            $table->timestamps();
-        });
+        Schema::dropIfExists('categories_quotes');
     }
 };

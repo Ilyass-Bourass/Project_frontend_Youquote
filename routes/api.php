@@ -25,9 +25,12 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/deleteMesFavorite/{id}',[MesFavoriteController::class,'deleteMesFavorite']);
     Route::post('/showMesFaorite',[MesFavoriteController::class,'showMesFaorite']);
         
+    // Accès aux tags et catégories sans restriction de rôle
+   
+    
     Route::middleware('role:admin')->group(function () {
-    Route::apiResource('categories', CategoryController::class);
-    Route::apiResource('tags', TagController::class);
+        Route::apiResource('categories', CategoryController::class)->except(['index']);
+        Route::apiResource('tags', TagController::class)->except(['index']);
     });
 
     Route::middleware('role:user')->group(function(){
@@ -39,6 +42,10 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::apiResource('quotes', QuoteController::class);
     
 });
+
+
+Route::get('tags', [TagController::class, 'index']);
+Route::get('categories', [CategoryController::class, 'index']);
 
 Route::post('/register',[UserController::class,'register']);
 Route::post('/login',[UserController::class,'login']);

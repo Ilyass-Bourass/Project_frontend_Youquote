@@ -9,7 +9,8 @@ class CategoryController extends Controller
 {
 
     public function index(){
-        return response()->json(['message'=>'la liste des categories']);
+        $categories=Category::all();
+        return response()->json($categories);
     }
     
     public function store(Request $request){
@@ -52,4 +53,6 @@ class CategoryController extends Controller
 
         return response()->json(['message'=>"la modification à été fais avec succées"],200);
     }
+
+    
 }

@@ -1,8 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { FaQuoteLeft, FaQuoteRight, FaHeart, FaBookmark } from "react-icons/fa";
-import { IoMdTrendingUp } from "react-icons/io";
-import { BsFillLightningFill } from "react-icons/bs";
+
 
 export default function NavBar() {
   return (

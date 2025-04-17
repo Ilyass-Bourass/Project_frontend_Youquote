@@ -6,6 +6,11 @@ use Illuminate\Http\Request;
 
 class TagController extends Controller
 {
+
+    public function index(){
+        $tags=Tag::all();
+        return response()->json($tags);
+    }
     public function store(Request $request){
         $request->validate([
             'name'=>'required|min:3'
