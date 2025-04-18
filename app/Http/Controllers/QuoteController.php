@@ -24,7 +24,6 @@ class QuoteController extends Controller
 
         
         try{
-            $this->authorize('index',Quote::class);
             $Quotes=Quote::get();
             return QuoteResource::collection($Quotes);
 

@@ -1,56 +1,29 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaSearch, FaEdit, FaTrash, FaPlus } from "react-icons/fa";
+import api from "../../services/api";
 import AddCategoryModal from "../../components/admin/AddCategoryModal";
 
 const CategoryManagement = () => {
     const [searchTerm, setSearchTerm] = useState("");
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [categories, setCategories] = useState([]);
+    const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+    const $token = localStorage.getItem("token");
 
-    // Sample category data (static for now)
-    const [categories, setCategories] = useState([
-        {
-            id: 1,
-            name: "Philosophie",
-            description: "Citations philosophiques",
-            count: 38,
-            created_at: "2023-01-05",
-        },
-        {
-            id: 2,
-            name: "Littérature",
-            description: "Extraits littéraires",
-            count: 45,
-            created_at: "2023-01-15",
-        },
-        {
-            id: 3,
-            name: "Science",
-            description: "Citations scientifiques",
-            count: 22,
-            created_at: "2023-02-10",
-        },
-        {
-            id: 4,
-            name: "Spiritualité",
-            description: "Pensées spirituelles",
-            count: 31,
-            created_at: "2023-02-20",
-        },
-        {
-            id: 5,
-            name: "Art",
-            description: "Citations d'artistes",
-            count: 26,
-            created_at: "2023-03-10",
-        },
-        {
-            id: 6,
-            name: "Politique",
-            description: "Citations politiques",
-            count: 18,
-            created_at: "2023-03-25",
-        },
-    ]);
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const response = await api.get("/categories");
+                setCategories(response.data);
+                console.log(response.data);
+            } catch (error) {
+                console.error(
+                    "Erreur lors de la récupération des catégories:",
+                    error.message
+                );
+            }
+        };
+        fetchCategories();
+    }, []);
 
     // Filter categories based on search term
     const filteredCategories = categories.filter(
@@ -68,22 +41,33 @@ const CategoryManagement = () => {
         alert(`Édition de la catégorie #${id}`);
     };
 
-    const handleDelete = (id) => {
+    const handleDelete = async (id) => {
         // This would be replaced with actual deletion logic
         if (
             window.confirm(
                 "Êtes-vous sûr de vouloir supprimer cette catégorie ?"
             )
         ) {
-            console.log(`Deleting category with ID: ${id}`);
-            setCategories(categories.filter((category) => category.id !== id));
-            alert(`Catégorie #${id} supprimée avec succès!`);
+            try {
+                await api.delete(`/categories/${id}`, {
+                    headers: {
+                        Authorization: `Bearer ${$token}`,
+                    },
+                });
+                setCategories(
+                    categories.filter((category) => category.id !== id)
+                );
+                console.log(`Deleting category with ID: ${id}`);
+                alert(`Catégorie #${id} supprimée avec succès!`);
+            } catch (err) {
+                alert("Erreur lors de la suppression de la catégorie");
+                console.error(err);
+            }
         }
     };
 
     const handleAddCategory = (newCategory) => {
         setCategories([...categories, newCategory]);
-        alert(`Catégorie "${newCategory.name}" ajoutée avec succès!`);
     };
 
     return (
@@ -94,12 +78,19 @@ const CategoryManagement = () => {
                 </h1>
                 <button
                     className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md flex items-center"
-                    onClick={() => setIsModalOpen(true)}
+                    onClick={() => setIsAddModalOpen(true)}
                 >
                     <FaPlus className="mr-2" />
                     Ajouter une catégorie
                 </button>
             </div>
+
+            {/* Add Category Modal */}
+            <AddCategoryModal
+                isOpen={isAddModalOpen}
+                onClose={() => setIsAddModalOpen(false)}
+                onAdd={handleAddCategory}
+            />
 
             {/* Search Bar */}
             <div className="bg-white p-4 rounded-lg shadow">
@@ -128,12 +119,7 @@ const CategoryManagement = () => {
                             >
                                 Catégorie
                             </th>
-                            <th
-                                scope="col"
-                                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                            >
-                                Description
-                            </th>
+
                             <th
                                 scope="col"
                                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
@@ -162,14 +148,11 @@ const CategoryManagement = () => {
                                         {category.name}
                                     </div>
                                 </td>
-                                <td className="px-6 py-4">
-                                    <div className="text-sm text-gray-500">
-                                        {category.description || "-"}
-                                    </div>
-                                </td>
+
                                 <td className="px-6 py-4 whitespace-nowrap">
                                     <div className="text-sm text-gray-900">
-                                        {category.count}
+                                        nombre de categories (en cours de
+                                        développement)
                                     </div>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
@@ -200,13 +183,6 @@ const CategoryManagement = () => {
                     </tbody>
                 </table>
             </div>
-
-            {/* Add Category Modal */}
-            <AddCategoryModal
-                isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
-                onAdd={handleAddCategory}
-            />
         </div>
     );
 };

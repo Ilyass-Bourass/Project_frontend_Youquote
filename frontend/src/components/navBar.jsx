@@ -4,6 +4,7 @@ import { FaQuoteLeft, FaQuoteRight, FaHeart, FaBookmark } from "react-icons/fa";
 
 
 export default function NavBar() {
+  
   return (
     <>
         <nav className="bg-white shadow-md rounded-b-3xl">

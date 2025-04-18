@@ -1,31 +1,66 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { FaUsers, FaTags, FaLayerGroup, FaQuoteRight } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import api from "../../services/api";
 
 const Dashboard = () => {
-    // Sample statistics data (static for now)
+    const [statsData, setStatsData] = useState({
+        count_users: 0,
+        count_quotes: 0,
+        count_tags: 0,
+        count_categories: 0,
+    });
+    const [loading, setLoading] = useState(true);
+
+    const $token = localStorage.getItem("token");
+
+    useEffect(() => {
+        const fetchData = async () => {
+            setLoading(true);
+            try {
+                const response = await api.get("/statistiques", {
+                    headers: {
+                        Authorization: `Bearer ${$token}`,
+                    },
+                });
+                console.log("API Response:", response.data);
+                // Set the stats data directly from the API response
+                setStatsData(response.data);
+            } catch (error) {
+                console.error(
+                    "Erreur lors de la récupération des statistiques:",
+                    error.message
+                );
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchData();
+    }, []);
+
+    // Create the stats array dynamically from the API data
     const stats = [
         {
             label: "Utilisateurs",
-            value: 547,
+            value: loading ? "..." : statsData.count_users,
             icon: <FaUsers className="text-blue-500" />,
             to: "/admin/users",
         },
         {
             label: "Citations",
-            value: 1483,
+            value: loading ? "..." : statsData.count_quotes,
             icon: <FaQuoteRight className="text-green-500" />,
             to: "/admin/quotes",
         },
         {
             label: "Tags",
-            value: 28,
+            value: loading ? "..." : statsData.count_tags,
             icon: <FaTags className="text-yellow-500" />,
             to: "/admin/tags",
         },
         {
             label: "Catégories",
-            value: 12,
+            value: loading ? "..." : statsData.count_categories,
             icon: <FaLayerGroup className="text-purple-500" />,
             to: "/admin/categories",
         },

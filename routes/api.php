@@ -13,6 +13,9 @@ use App\Http\Controllers\UserController;
 //     return 'Hello, World!';
 // })->middleware('auth:sanctum');
 
+
+Route::get('quotes', [QuoteController::class, 'index']);
+
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
@@ -32,6 +35,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::apiResource('categories', CategoryController::class)->except(['index']);
         Route::apiResource('tags', TagController::class)->except(['index']);
         Route::get('users',[UserController::class,'getUsers']);
+        Route::get('statistiques',[UserController::class,'getStatistique']);
     });
 
     Route::middleware('role:user')->group(function(){
@@ -40,7 +44,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         });
     });
     Route::post('logout',[UserController::class,'logout']);
-    Route::apiResource('quotes', QuoteController::class);
+    Route::apiResource('quotes', QuoteController::class)->except(['index']);
     
 });
 
