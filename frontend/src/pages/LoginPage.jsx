@@ -16,7 +16,7 @@ export default function LoginPage() {
       localStorage.setItem('token', JSON.stringify(res.data.token));
       if(res.data.user.role === 'admin') {
         console.log('admin');
-        navigate('/dashboarAdmin');
+        navigate('/admin');
       }else{
         navigate('/dashboardUser');
       }

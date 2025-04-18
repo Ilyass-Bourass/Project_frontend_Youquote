@@ -21,7 +21,12 @@ export default function RegisterPage() {
       console.log('✅ Inscrit:', res.data);
       localStorage.setItem('user', JSON.stringify(res.data.user));
       localStorage.setItem('token', JSON.stringify(res.data.token));
-      navigate('/home');
+      if(res.data.user.role === 'admin') {
+        console.log('admin');
+        navigate('/admin');
+      }else{
+        navigate('/dashboardUser');
+      }
     } catch (error) {
       alert(`Erreur de connexion: ${error.response.data.message}`);
       console.log(error.response.data.message);

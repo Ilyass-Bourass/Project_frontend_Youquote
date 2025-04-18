@@ -31,6 +31,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::middleware('role:admin')->group(function () {
         Route::apiResource('categories', CategoryController::class)->except(['index']);
         Route::apiResource('tags', TagController::class)->except(['index']);
+        Route::get('users',[UserController::class,'getUsers']);
     });
 
     Route::middleware('role:user')->group(function(){

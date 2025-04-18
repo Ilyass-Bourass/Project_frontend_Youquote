@@ -42,4 +42,10 @@ class UserController extends Controller
         $request->user()->currentAccessToken()->delete();
         return response()->json(['message'=>"logout a été bien fait"],200);
     }
+
+    public function getUsers()
+    {
+        $users = User::all();
+        return response()->json($users, 200);
+    }
 }
